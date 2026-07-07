@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Инженер по эксплуатации сети | ЭР-Телеком</title>
+  <style>
+    /* ---------- Общие стили ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+      background: #f4f9ff;
+      color: #0b1e33;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    section {
+      padding: 70px 0 50px;
+      border-bottom: 1px solid rgba(0, 85, 204, 0.08);
+    }
+
+    section:last-of-type {
+      border-bottom: none;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      margin-bottom: 1.2rem;
+      color: #00337a;
+      letter-spacing: -0.02em;
+    }
+
+    .subhead {
+      font-size: 1.2rem;
+      color: #2a4a7f;
+      max-width: 700px;
+      margin-bottom: 2rem;
+    }
+
+    /* ---------- Кнопки ---------- */
+    .btn {
+      display: inline-block;
+      background: #0055cc;
+      color: #fff;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0, 85, 204, 0.25);
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background: #003d99;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 85, 204, 0.35);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #0055cc;
+      border: 2px solid #0055cc;
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background: #0055cc;
+      color: #fff;
+    }
+
+    /* ---------- Карточки ---------- */
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 30px;
+      margin: 25px 0 15px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px 22px;
+      box-shadow: 0 8px 25px rgba(0, 40, 100, 0.06);
+      transition: all 0.2s ease;
+      border: 1px solid rgba(0, 85, 204, 0.05);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(0, 40, 100, 0.10);
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      color: #00337a;
+    }
+
+    .card p {
+      color: #1e3a5f;
+      margin-bottom: 15px;
+    }
+
+    .card .btn {
+      margin-top: 5px;
+      padding: 8px 22px;
+      font-size: 0.9rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e6f0ff;
+      color: #0055cc;
+      font-weight: 600;
+      font-size: 0.75rem;
+      padding: 4px 14px;
+      border-radius: 30px;
+      margin-bottom: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ---------- Спецблоки ---------- */
+    .hero {
+      background: linear-gradient(145deg, #eef5ff, #dce7fa);
+      text-align: center;
+      padding: 100px 0 80px;
+      border-bottom: none;
+    }
+
+    .hero h1 {
+      font-size: 3.2rem;
+      color: #002a6e;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      color: #1f4172;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+    }
+
+    .steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin: 25px 0;
+      counter-reset: step;
+    }
+
+    .step-item {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px 25px;
+      flex: 1 1 180px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      border-left: 5px solid #0055cc;
+      counter-increment: step;
+    }
+
+    .step-item::before {
+      content: "0" counter(step);
+      font-weight: 700;
+      color: #0055cc;
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .step-item p {
+      margin: 0;
+      font-weight: 500;
+    }
+
+    /* ---------- Модальные окна ---------- */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 20, 50, 0.6);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #fff;
+      max-width: 500px;
+      width: 100%;
+      padding: 35px 30px;
+      border-radius: 28px;
+      position: relative;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+      animation: fadeUp 0.3s ease;
+    }
+
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      font-size: 2rem;
+      line-height: 1;
+      cursor: pointer;
+      color: #5f7d9c;
+      transition: 0.2s;
+      background: none;
+      border: none;
+    }
+
+    .modal-close:hover {
+      color: #00337a;
+      transform: rotate(90deg);
+    }
+
+    .modal-content h3 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: #002a6e;
+    }
+
+    .modal-content p {
+      color: #1e3a5f;
+      margin-bottom: 10px;
+    }
+
+    /* ---------- Тест ---------- */
+    .test-block {
+      background: #e6f0ff;
+      border-radius: 32px;
+      padding: 40px 35px;
+      margin-top: 10px;
+    }
+
+    .test-question {
+      background: #fff;
+      padding: 18px 22px;
+      border-radius: 16px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 20px 30px;
+    }
+
+    .test-question p {
+      font-weight: 600;
+      margin: 0;
+      min-width: 160px;
+      flex: 1;
+    }
+
+    .test-question label {
+      margin-right: 20px;
+      font-weight: 500;
+      color: #1f4172;
+      cursor: pointer;
+    }
+
+    .test-question input[type="radio"] {
+      margin-right: 6px;
+      accent-color: #0055cc;
+      transform: scale(1.1);
+    }
+
+    .test-result {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #002a6e;
+      background: #fff;
+      padding: 16px 25px;
+      border-radius: 60px;
+      display: inline-block;
+      margin-top: 20px;
+    }
+
+    /* ---------- Адаптив ---------- */
+    @media (max-width: 992px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.4rem; }
+      h2 { font-size: 1.8rem; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .step-item { flex: 1 1 100%; }
+      .test-question { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .test-question p { min-width: auto; }
+      .modal-content { padding: 25px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .btn { padding: 10px 22px; font-size: 0.9rem; width: 100%; text-align: center; }
+      .card { padding: 20px; }
+    }
+
+    /* ---------- Допомога для скролла ---------- */
+    .anchor-offset {
+      scroll-margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====== 1. ГЛАВНЫЙ ЭКРАН ====== -->
+  <section class="hero" id="home">
+    <div class="container">
+      <h1>Инженер по эксплуатации сети</h1>
+      <p>Профессия, которая держит мир на связи. Узнайте, как стать частью команды ЭР-Телеком.</p>
+      <button class="btn" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">Узнать больше</button>
+    </div>
+  </section>
+
+  <!-- ====== 2. КТО ЭТО ПРОСТЫМИ СЛОВАМИ ====== -->
+  <section id="about" class="anchor-offset">
+    <div class="container">
+      <h2>Кто это простыми словами</h2>
+      <p class="subhead">Инженер по эксплуатации сети — это «доктор» для интернета. Если сеть — кровеносная система компании, то инженер следит, чтобы кровь бежала быстро, сосуды не лопались, а все органы работали без сбоев.</p>
+      <button class="btn" onclick="document.getElementById('tasks').scrollIntoView({behavior:'smooth'})">Смотреть задачи</button>
+    </div>
+  </section>
+
+  <!-- ====== 3. РАБОЧИЕ ЗАДАЧИ (6) ====== -->
+  <section id="tasks" class="anchor-offset">
+    <div class="container">
+      <h2>Рабочие задачи</h2>
+      <p class="subhead">6 ключевых направлений, которыми ежедневно занимается инженер.</p>
+      <div class="grid-3">
+        <div class="card"><span class="badge">01</span><h3>Мониторинг сети</h3><p>Непрерывное наблюдение за сетевыми устройствами, выявление аномалий.</p><button class="btn btn-outline" onclick="openModal('modal1')">Подробнее</button></div>
+        <div class="card"><span class="badge">02</span><h3>Устранение неполадок</h3><p>Быстрая диагностика и восстановление работы оборудования.</p><button class="btn btn-outline" onclick="openModal('modal2')">Подробнее</button></div>
+        <div class="card"><span class="badge">03</span><h3>Настройка оборудования</h3><p>Конфигурация маршрутизаторов, коммутаторов, оптимизация параметров.</p><button class="btn btn-outline" onclick="openModal('modal3')">Подробнее</button></div>
+        <div class="card"><span class="badge">04</span><h3>Обновление ПО</h3><p>Контроль версий прошивок, плановое обновление и откат при сбоях.</p><button class="btn btn-outline" onclick="openModal('modal4')">Подробнее</button></div>
+        <div class="card"><span class="badge">05</span><h3>Анализ трафика</h3><p>Выявление узких мест, прогнозирование нагрузки на сеть.</p><button class="btn btn-outline" onclick="openModal('modal5')">Подробнее</button></div>
+        <div class="card"><span class="badge">06</span><h3>Документирование</h3><p>Ведение схем сети, журналов инцидентов и инструкций для команды.</p><button class="btn btn-outline" onclick="openModal('modal6')">Подробнее</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== 4. НАВЫКИ ====== -->
+  <section id="skills" class="anchor-offset">
+    <div class="container">
+      <h2>Hard & Soft навыки</h2>
+      <p class="subhead">Что нужно развивать, чтобы стать востребованным инженером.</p>
+      <div class="grid-4">
+        <div class="card"><h3>🛠️ Hard skills</h3><p>Сетевые протоколы (TCP/IP, BGP, OSPF), работа с Cisco/Juniper, настройка VPN.</p></div>
+        <div class="card"><h3>🤝 Soft skills</h3><p>Коммуникация, работа в команде, стрессоустойчивость, системное мышление.</p></div>
+        <div class="card"><h3>📘 Техническая грамотность</h3><p>Понимание принципов маршрутизации, VLAN, DNS, умение читать схему сети.</p></div>
+        <div class="card"><h3>🧩 Проблемное мышление</h3><p>Анализ сложных сбоев, поиск первопричины, нестандартные решения.</p></div>
+      </div>
+      <button class="btn" onclick="document.getElementById('career').scrollIntoView({behavior:'smooth'})">Как начать карьеру?</button>
+    </div>
+  </section>
+
+  <!-- ====== 5. КАК НАЧАТЬ КАРЬЕРУ СТУДЕНТУ ====== -->
+  <section id="career" class="anchor-offset">
+    <div class="container">
+      <h2>Как начать карьеру студенту</h2>
+      <p class="subhead">Пошаговый план, который приведёт вас в профессию.</p>
+      <div class="steps">
+        <div class="step-item"><p>Изучите основы: OSI, TCP/IP, DNS, DHCP</p></div>
+        <div class="step-item"><p>Установите Wireshark и начните анализировать трафик</p></div>
+        <div class="step-item"><p>Пройдите курсы CCNA или Network+</p></div>
+        <div class="step-item"><p>Найдите стажировку в ЭР-Телеком</p></div>
+        <div class="step-item"><p>Работайте с наставником над реальными задачами</p></div>
+      </div>
+      <button class="btn" onclick="document.getElementById('test-section').scrollIntoView({behavior:'smooth'})">Пройти тест</button>
+    </div>
+  </section>
+
+  <!-- ====== 6. ОДИН ДЕНЬ ИЗ ЖИЗНИ ====== -->
+  <section id="day" class="anchor-offset">
+    <div class="container">
+      <h2>Один день из жизни</h2>
+      <p class="subhead">Как выглядит типичный день инженера по эксплуатации.</p>
+      <div class="grid-3">
+        <div class="card"><h3>🌅 Утро</h3><p>Проверка дашбордов, чтение отчётов за ночь, короткий стендап с командой.</p></div>
+        <div class="card"><h3>⚡ День</h3><p>Настройка оборудования, плановые работы, решение инцидентов.</p></div>
+        <div class="card"><h3>🌇 Вечер</h3><p>Анализ загрузки, подготовка отчётов, планирование на завтра.</p></div>
+      </div>
+      <button class="btn" onclick="openModal('modalDay')">Мой идеальный день</button>
+    </div>
+  </section>
+
+  <!-- ====== 7. ПОЧЕМУ РОЛЬ ВАЖНА ДЛЯ ЭРТХ ====== -->
+  <section id="role" class="anchor-offset">
+    <div class="container">
+      <h2>Почему роль важна для ЭР-Телеком</h2>
+      <p class="subhead">Инженеры эксплуатации — гарант качества и доверия клиентов.</p>
+      <div class="grid-3">
+        <div class="card"><h3>🔒 Стабильность</h3><p>Бесперебойная работа сети = довольные абоненты и бизнес-клиенты.</p></div>
+        <div class="card"><h3>📈 Оптимизация</h3><p>Анализ и настройка снижают затраты и повышают пропускную способность.</p></div>
+        <div class="card"><h3>🚀 Решение проблем</h3><p>Скорость реакции на сбои напрямую влияет на репутацию компании.</p></div>
+      </div>
+      <button class="btn" onclick="document.getElementById('career').scrollIntoView({behavior:'smooth'})">Узнать о стажировках</button>
+    </div>
+  </section>
+
+  <!-- ====== 8. ИНТЕРАКТИВНЫЙ ТЕСТ ====== -->
+  <section id="test-section" class="anchor-offset">
+    <div class="container">
+      <h2>Интерактивный тест</h2>
+      <p class="subhead">Проверьте, насколько вы готовы к профессии. Ответьте на 5 вопросов.</p>
+      <div class="test-block">
+        <form id="quizForm">
+          <div class="test-question">
+            <p>1. Вам нравится разбираться в сложных системах?</p>
+            <label><input type="radio" name="q1" value="yes"> Да</label>
+            <label><input type="radio" name="q1" value="no"> Нет</label>
+          </div>
+          <div class="test-question">
+            <p>2. Вы готовы учиться новому каждый день?</p>
+            <label><input type="radio" name="q2" value="yes"> Да</label>
+            <label><input type="radio" name="q2" value="no"> Нет</label>
+          </div>
+          <div class="test-question">
+            <p>3. Вам комфортно работать с цифрами и логами?</p>
+            <label><input type="radio" name="q3" value="yes"> Да</label>
+            <label><input type="radio" name="q3" value="no"> Нет</label>
+          </div>
+          <div class="test-question">
+            <p>4. Вы способны сохранять спокойствие в нештатных ситуациях?</p>
+            <label><input type="radio" name="q4" value="yes"> Да</label>
+            <label><input type="radio" name="q4" value="no"> Нет</label>
+          </div>
+          <div class="test-question">
+            <p>5. Вам интересно, как устроены сети провайдеров?</p>
+            <label><input type="radio" name="q5" value="yes"> Да</label>
+            <label><input type="radio" name="q5" value="no"> Нет</label>
+          </div>
+          <button type="button" class="btn" onclick="calculateResult()">Узнать результат</button>
+        </form>
+        <div id="resultDisplay" class="test-result" style="display: none;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== МОДАЛЬНЫЕ ОКНА (задачи) ====== -->
+  <div id="modal1" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModal('modal1')">×</button><h3>Мониторинг сети</h3><p>Инженер использует системы Zabbix, PRTG или Grafana. Настраивает пороги срабатывания, анализирует графики нагрузки, чтобы предупредить сбой до того, как он повлияет на пользователей.</p></div></div>
+  <div id="modal2" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModal('modal2')">×</button><h3>Устранение неполадок</h3><p>По шагам: локализация проблемы (оборудование, канал, конфигурация), проверка физических подключений, тестирование резервных маршрутов, восстановление сервиса.</p></div></div>
+  <div id="modal3" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModal('modal3')">×</button><h3>Настройка оборудования</h3><p>Работа с CLI Cisco, Juniper, Huawei. Применение конфигураций, изменение VLAN, настройка QoS для приоритизации трафика.</p></div></div>
+  <div id="modal4" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModal('modal4')">×</button><h3>Обновление ПО</h3><p>Планирование окон обновления, тестирование в лабораторной среде, развертывание прошивок. В случае нештатной ситуации — быстрый откат.</p></div></div>
+  <div id="modal5" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModal('modal5')">×</button><h3>Анализ трафика</h3><p>Сбор статистики NetFlow, sFlow. Выявление пиковых нагрузок, DDoS-атак, неоптимальных маршрутов. Подготовка рекомендаций по расширению каналов.</p></div></div>
+  <div id="modal6" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModal('modal6')">×</button><h3>Документирование</h3><p>Создание и поддержка актуальных схем сети, база знаний по частым инцидентам, регламенты взаимодействия с другими отделами.</p></div></div>
+
+  <!-- ====== МОДАЛЬНОЕ ОКНО (идеальный день) ====== -->
+  <div id="modalDay" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modalDay')">×</button>
+      <h3>Ваш идеальный рабочий день</h3>
+      <p>☕ 9:00 — чашка кофе и быстрая проверка дашбордов.<br>
+      📊 10:00 — планерка, распределение задач на день.<br>
+      🔧 11:30 — работа над настройкой нового маршрутизатора.<br>
+      🍽️ 13:00 — обед и обмен опытом с коллегами.<br>
+      📈 14:30 — анализ трафика и оптимизация маршрутов.<br>
+      🛠️ 16:00 — решение нестандартной задачи (например, восстановление резервного канала).<br>
+      📝 18:00 — подготовка отчёта и планов на завтра.<br>
+      🏠 19:00 — завершение дня, все системы работают стабильно.</p>
+    </div>
+  </div>
+
+  <!-- ====== ПОДВАЛ (необязательно) ====== -->
+  <footer style="background: #dce7fa; padding: 30px 0; text-align: center; color: #1f4172;">
+    <div class="container">
+      <p>© 2026 ЭР-Телеком Холдинг. Страница создана для мастер-класса.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ----- Модальные окна -----
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    // Закрытие по клику на фон
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+          document.body.style.overflow = 'auto';
+        }
+      });
+    });
+
+    // ----- Тест (5 вопросов) -----
+    function calculateResult() {
+      const form = document.getElementById('quizForm');
+      const answers = form.querySelectorAll('input[type="radio"]:checked');
+      const totalQuestions = 5;
+
+      if (answers.length < totalQuestions) {
+        alert('Пожалуйста, ответьте на все 5 вопросов.');
+        return;
+      }
+
+      let score = 0;
+      answers.forEach(input => {
+        if (input.value === 'yes') score++;
+      });
+
+      const resultDiv = document.getElementById('resultDisplay');
+      let message = '';
+      if (score === 5) message = '🌟 Отлично! Вы созданы для этой профессии!';
+      else if (score >= 3) message = '👍 Хороший результат! У вас есть все шансы стать инженером.';
+      else message = '📚 Неплохо, но стоит подтянуть знания. Начните с курсов!';
+
+      resultDiv.style.display = 'inline-block';
+      resultDiv.textContent = `${score} из ${totalQuestions} — ${message}`;
+
+      // Прокрутка к результату
+      resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+
+</body>
+</html>
