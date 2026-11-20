@@ -1,193 +1,218 @@
-using System;
-using System.Collections.Generic;
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная работа №7 — Киселев Иван</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; color: #333; }
+        h1, h2, h3 { color: #2c3e50; }
+        .container { display: flex; flex-wrap: wrap; gap: 20px; }
+        .block { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex: 1; min-width: 300px; }
+        button { background-color: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin: 5px 0; transition: 0.3s; }
+        button:hover { background-color: #2980b9; }
+        input { padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 18px); box-sizing: border-box; }
+        ul { list-style-type: none; padding: 0; }
+        li { background: #ecf0f1; margin: 5px 0; padding: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .error-text { color: red; font-weight: bold; }
+        .success-text { color: green; font-weight: bold; }
+        
+        .group-box { border: 2px solid #2980b9; border-radius: 8px; padding: 15px; margin-bottom: 15px; background-color: #e8f4f8; }
+        .group-title { margin-top: 0; color: #2c3e50; border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; }
+        .group-list { list-style: none; padding: 0; margin: 0; }
+        .group-list li { background: white; padding: 10px; margin: 5px 0; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
 
-// ==========================================
-// 1. КЛАСС СТУДЕНТА (Student.cs)
-// ==========================================
-public class Student
-{
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public int Age { get; set; }
-    public string Group { get; set; }
-    public string Email { get; set; }
+    <h1>Киселев Иван, ИКТп-53</h1>
 
-    public string GetFullName()
-    {
-        return FirstName + " " + LastName;
-    }
-}
+    <div class="container">
+        <div class="block">
+            <h2>Студенты</h2>
+            <button onclick="loadStudents()">🔄 Обновить список</button>
+            <ul id="studentList"></ul>
 
-// ==========================================
-// 2. КЛАСС КУРСА (Course.cs)
-// ==========================================
-public class Course
-{
-    public string Title { get; set; }
-    public string TeacherName { get; set; }
-}
+            <h3>Добавить студента (POST)</h3>
+            <input type="text" id="firstName" placeholder="Имя">
+            <input type="text" id="lastName" placeholder="Фамилия">
+            <input type="number" id="age" placeholder="Возраст">
+            <input type="text" id="group" placeholder="Группа">
+            <input type="email" id="email" placeholder="Email">
+            <button onclick="addStudent()">➕ Добавить</button>
 
-// ==========================================
-// 3. СЕРВИС СТУДЕНТОВ (StudentService.cs)
-// ==========================================
-public class StudentService
-{
-    private List<Student> students = new List<Student>();
+            <h3>Найти по ID (GET)</h3>
+            <input type="number" id="searchId" placeholder="Введите ID">
+            <button onclick="findStudentById()">🔍 Найти</button>
+            <p id="searchResult"></p>
 
-    public bool AddStudent(Student student)
-    {
-        foreach (Student s in students)
-        {
-            if (s.GetFullName().ToLower() == student.GetFullName().ToLower())
-            {
-                return false;
+            <h3>Удалить по ID (DELETE)</h3>
+            <input type="number" id="deleteId" placeholder="Введите ID">
+            <button onclick="deleteStudent()" style="background-color: #e74c3c;">🗑️ Удалить</button>
+        </div>
+
+        <div class="block">
+            <h2>Студенты по группам</h2>
+            <button onclick="loadStudentsByGroups()" style="background-color: #27ae60; width: 100%; font-size: 16px; padding: 12px;">📁 Показать все группы</button>
+            <div id="groupsContainer" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="block">
+            <h2>Курсы</h2>
+            <button onclick="loadCourses()">🔄 Обновить список</button>
+            <ul id="courseList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:5001/api"; 
+
+        async function loadStudents() {
+            try {
+                let response = await fetch(`${API_URL}/Students`);
+                let students = await response.json();
+                let list = document.getElementById("studentList");
+                list.innerHTML = "";
+                
+                students.forEach(s => {
+                    let li = document.createElement("li");
+                    li.innerHTML = `<span><b>ID: ${s.id}</b> | ${s.firstName} ${s.lastName}, ${s.age} лет, гр. ${s.group} (${s.email || 'без email'})</span>`;
+                    list.appendChild(li);
+                });
+            } catch (error) {
+                console.error("Ошибка при загрузке:", error);
             }
         }
-        students.Add(student);
-        return true;
-    }
 
-    public List<Student> GetAllStudents() => students;
+        async function addStudent() {
+            let newStudent = {
+                firstName: document.getElementById("firstName").value,
+                lastName: document.getElementById("lastName").value,
+                age: parseInt(document.getElementById("age").value),
+                group: document.getElementById("group").value,
+                email: document.getElementById("email").value
+            };
 
-    public bool RemoveStudentByFullName(string fullName)
-    {
-        Student studentToRemove = null;
-        foreach (Student s in students)
-        {
-            if (s.GetFullName().ToLower() == fullName.ToLower())
-            {
-                studentToRemove = s;
-                break;
-            }
-        }
-
-        if (studentToRemove != null)
-        {
-            students.Remove(studentToRemove);
-            return true;
-        }
-        return false;
-    }
-
-    public List<Student> GetStudentsByGroup(string groupName)
-    {
-        List<Student> result = new List<Student>();
-        foreach (Student s in students)
-        {
-            if (s.Group.ToLower() == groupName.ToLower())
-                result.Add(s);
-        }
-        return result;
-    }
-
-    public int GetStudentsCount() => students.Count;
-
-    public double GetAverageAge()
-    {
-        if (students.Count == 0) return 0;
-        double totalAge = 0;
-        foreach (Student s in students) totalAge += s.Age;
-        return totalAge / students.Count;
-    }
-}
-
-// ==========================================
-// 4. СЕРВИС КУРСОВ (CourseService.cs)
-// ==========================================
-public class CourseService
-{
-    private List<Course> courses = new List<Course>();
-    public void AddCourse(Course course) => courses.Add(course);
-    public List<Course> GetAllCourses() => courses;
-}
-
-// ==========================================
-// 5. ГЛАВНЫЙ КЛАСС (Program.cs)
-// ==========================================
-class Program
-{
-    static void Main()
-    {
-        StudentService studentService = new StudentService();
-        CourseService courseService = new CourseService();
-
-        studentService.AddStudent(new Student { FirstName = "Иван", LastName = "Киселев", Age = 20, Group = "ИКТп-53", Email = "ivan@pguti.ru" });
-        studentService.AddStudent(new Student { FirstName = "Мария", LastName = "Сидорова", Age = 19, Group = "ИКТп-54", Email = "maria@example.com" });
-
-        courseService.AddCourse(new Course { Title = "Языки программирования", TeacherName = "Иванов И.И." });
-
-        bool isRunning = true;
-
-        while (isRunning)
-        {
-            Console.WriteLine("\n==================================");
-            Console.WriteLine("1 - Показать всех студентов (и их количество)");
-            Console.WriteLine("2 - Добавить студента");
-            Console.WriteLine("3 - Удалить студента по имени");
-            Console.WriteLine("4 - Показать студентов группы");
-            Console.WriteLine("5 - Показать средний возраст");
-            Console.WriteLine("6 - Показать все курсы");
-            Console.WriteLine("0 - Выход");
-            Console.Write("Выберите действие: ");
+            let response = await fetch(`${API_URL}/Students`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newStudent)
+            });
             
-            string choice = Console.ReadLine();
-
-            switch (choice)
-            {
-                case "1":
-                    Console.WriteLine($"\n--- Всего студентов: {studentService.GetStudentsCount()} ---");
-                    foreach (Student s in studentService.GetAllStudents())
-                        Console.WriteLine($"{s.GetFullName()} | Группа: {s.Group} | Возраст: {s.Age} | Email: {s.Email}");
-                    break;
-
-                case "2":
-                    Console.Write("Введите имя: "); string firstName = Console.ReadLine();
-                    Console.Write("Введите фамилию: "); string lastName = Console.ReadLine();
-                    Console.Write("Введите возраст: "); int age = int.Parse(Console.ReadLine());
-                    Console.Write("Введите группу: "); string group = Console.ReadLine();
-                    Console.Write("Введите email: "); string email = Console.ReadLine();
-
-                    Student newStudent = new Student { FirstName = firstName, LastName = lastName, Age = age, Group = group, Email = email };
-
-                    if (studentService.AddStudent(newStudent))
-                        Console.WriteLine("Студент успешно добавлен!");
-                    else
-                        Console.WriteLine("Ошибка: Студент с таким именем уже есть!");
-                    break;
-
-                case "3":
-                    Console.Write("Введите имя и фамилию: ");
-                    string fullName = Console.ReadLine();
-                    Console.WriteLine(studentService.RemoveStudentByFullName(fullName) ? "Удалено." : "Не найден.");
-                    break;
-
-                case "4":
-                    Console.Write("Введите группу: ");
-                    string searchGroup = Console.ReadLine();
-                    List<Student> groupStudents = studentService.GetStudentsByGroup(searchGroup);
-                    Console.WriteLine($"\n--- Студенты группы {searchGroup} ---");
-                    if (groupStudents.Count == 0) Console.WriteLine("Нет студентов.");
-                    else foreach (Student s in groupStudents) Console.WriteLine($"{s.GetFullName()} (возраст: {s.Age})");
-                    break;
-
-                case "5":
-                    Console.WriteLine($"\nСредний возраст: {studentService.GetAverageAge():F1} лет");
-                    break;
-
-                case "6":
-                    Console.WriteLine("\n--- Список курсов ---");
-                    foreach (Course c in courseService.GetAllCourses())
-                        Console.WriteLine($"Курс: {c.Title} | Преподаватель: {c.TeacherName}");
-                    break;
-
-                case "0":
-                    isRunning = false;
-                    break;
-
-                default:
-                    Console.WriteLine("Неизвестная команда.");
-                    break;
+            if (response.ok) {
+                alert("Студент добавлен в базу данных!");
+                loadStudents();
+                document.getElementById("firstName").value = "";
+                document.getElementById("lastName").value = "";
+                document.getElementById("age").value = "";
+                document.getElementById("group").value = "";
+                document.getElementById("email").value = "";
             }
         }
-    }
-}
+
+        async function findStudentById() {
+            let id = document.getElementById("searchId").value;
+            let p = document.getElementById("searchResult");
+
+            if (!id) {
+                p.innerHTML = "Введите ID!";
+                p.className = "error-text";
+                return;
+            }
+
+            let response = await fetch(`${API_URL}/Students/${id}`);
+
+            if (response.ok) {
+                let student = await response.json();
+                p.innerHTML = `Найден: ${student.firstName} ${student.lastName} (Группа: ${student.group})`;
+                p.className = "success-text";
+            } else {
+                p.innerHTML = "Студент не найден (404)!";
+                p.className = "error-text";
+            }
+        }
+
+        async function deleteStudent() {
+            let id = document.getElementById("deleteId").value;
+            if (!id) return alert("Введите ID для удаления!");
+
+            let response = await fetch(`${API_URL}/Students/${id}`, { method: 'DELETE' });
+            
+            if (response.ok) {
+                alert("Студент удалён из базы!");
+                loadStudents();
+                document.getElementById("deleteId").value = "";
+            } else {
+                alert("Ошибка: студент с таким ID не найден.");
+            }
+        }
+
+        async function loadStudentsByGroups() {
+            let container = document.getElementById("groupsContainer");
+            container.innerHTML = "<p>Загрузка данных...</p>";
+
+            try {
+                let response = await fetch(`${API_URL}/Students`);
+                let students = await response.json();
+
+                if (students.length === 0) {
+                    container.innerHTML = "<p>В базе данных пока нет студентов.</p>";
+                    return;
+                }
+
+                let grouped = {};
+                students.forEach(s => {
+                    if (!grouped[s.group]) {
+                        grouped[s.group] = [];
+                    }
+                    grouped[s.group].push(s);
+                });
+
+                container.innerHTML = "";
+
+                for (let groupName in grouped) {
+                    let groupBlock = document.createElement("div");
+                    groupBlock.className = "group-box";
+
+                    let title = document.createElement("h4");
+                    title.className = "group-title";
+                    title.innerHTML = `Группа: <span style="color: #e74c3c;">${groupName}</span> (Студентов: ${grouped[groupName].length})`;
+                    groupBlock.appendChild(title);
+
+                    let ul = document.createElement("ul");
+                    ul.className = "group-list";
+
+                    grouped[groupName].forEach(s => {
+                        let li = document.createElement("li");
+                        li.innerHTML = `<b>${s.firstName} ${s.lastName}</b> (ID: ${s.id}) — ${s.age} лет, Email: ${s.email || 'нет'}`;
+                        ul.appendChild(li);
+                    });
+
+                    groupBlock.appendChild(ul);
+                    container.appendChild(groupBlock);
+                }
+
+            } catch (error) {
+                console.error("Ошибка:", error);
+                container.innerHTML = "<p class='error-text'>Ошибка при загрузке данных с сервера.</p>";
+            }
+        }
+
+        async function loadCourses() {
+            let response = await fetch(`${API_URL}/Courses`);
+            let courses = await response.json();
+            let list = document.getElementById("courseList");
+            list.innerHTML = "";
+            
+            courses.forEach(c => {
+                let li = document.createElement("li");
+                li.innerHTML = `<span>${c.title} (Преподаватель: ${c.teacherName})</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        loadStudents();
+        loadCourses();
+    </script>
+
+</body>
+</html>
